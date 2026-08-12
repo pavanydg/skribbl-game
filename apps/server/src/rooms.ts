@@ -1,4 +1,4 @@
-import type { Room, Player, RoomSettings } from "@skribbl/shared";
+import type { Room, Player, RoomSettings, RoomState } from "@skribbl/shared";
 
 const DEFAULT_SETTINGS: RoomSettings = {
 	maxPlayers: 8,
@@ -100,4 +100,14 @@ export function removePlayer(socketId: string): Room | null {
 		room.players[0].isHost = true;
 	}
 	return room;
+}
+
+export function roomToPublic(room: Room): RoomState {
+	return {
+		code: room.code,
+		hostSocketId: room.hostSocketId,
+		players: room.players,
+		settings: room.settings,
+		game: null, // no game state exposed yet
+	};
 }
