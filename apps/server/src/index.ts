@@ -4,6 +4,7 @@ import type {
 	ClientToServerEvents,
 	ServerToClientEvents,
 } from "@skribbl/shared";
+import { registerRoomHandlers } from "./handlers/roomHandlers.js";
 
 const httpServer = createServer();
 
@@ -16,6 +17,8 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 
 io.on("connection", (socket) => {
 	console.log("connected:", socket.id);
+
+	registerRoomHandlers(io, socket);
 
 	socket.on("disconnect", () => {
 		console.log("disconnected:", socket.id);
