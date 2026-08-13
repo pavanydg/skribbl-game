@@ -35,22 +35,24 @@ export interface DrawPoint {
 }
 
 export interface ClientToServerEvents {
-  create_room: (
-    payload: { name: string; settings?: Partial<RoomSettings> },
-    ack: (res: { code: string } | { error: string }) => void
-  ) => void;
+	create_room: (
+		payload: { name: string; settings?: Partial<RoomSettings> },
+		ack: (res: { code: string } | { error: string }) => void
+	) => void;
 
-  join_room: (
-    payload: { code: string; name: string },
-    ack: (res: { ok: true } | { error: string }) => void
-  ) => void;
+	join_room: (
+		payload: { code: string; name: string },
+		ack: (res: { ok: true } | { error: string }) => void
+	) => void;
 
-  start_game: () => void;
-  choose_word: (payload: { word: string }) => void;
-  draw: (payload: DrawPoint) => void;
-  clear_canvas: () => void;
-  guess: (payload: { text: string }) => void;
-  play_again: () => void;
+	start_game: () => void;
+	choose_word: (payload: { word: string }) => void;
+	draw: (payload: DrawPoint) => void;
+	clear_canvas: () => void;
+	guess: (payload: { text: string }) => void;
+	play_again: () => void;
+	leave_room: () => void;
+	check_room: (payload: { code: string }, ack: (exists: boolean) => void) => void;
 }
 
 export interface ServerToClientEvents {

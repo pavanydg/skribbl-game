@@ -5,7 +5,8 @@ interface GameStore {
 	room: RoomState | null;
 	connected: boolean;
 	setRoom: (room: RoomState) => void;
-	setConnected: (connected: boolean) => void;
+    setConnected: (connected: boolean) => void;
+    clearRoom: () => void;
 }
 
 export const useGameStore = create<GameStore>((set) => ({
@@ -13,4 +14,5 @@ export const useGameStore = create<GameStore>((set) => ({
 	connected: false,
 	setRoom: (room) => set({ room }),
 	setConnected: (connected) => set({ connected }),
+	clearRoom: () => set({ room: null }),
 }));

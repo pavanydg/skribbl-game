@@ -1,17 +1,42 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useGameStore } from "@/lib/store";
+import { socket } from "@/lib/socket";
+import { useRouter } from "next/navigation";
 
 export default function RoomPage({
 	params,
 }: {
 	params: Promise<{ code: string }>;
 }) {
-	const { code } = use(params);
+  const { code } = use(params);
+  const router = useRouter();
 	const room = useGameStore((s) => s.room);
 	const [copied, setCopied] = useState(false);
+	const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => {
+		if (room?.code === code) return; // already a member
+		socket.emit("check_room", { code }, (exists) => {
+			if (!exists) router.replace("/");
+		});
+	}, [code, room, router]);
+
+	useEffect(() => {
+		// Cancel a leave scheduled by Strict Mode's dev-only mount/cleanup/remount cycle.
+		if (leaveTimeoutRef.current) {
+			clearTimeout(leaveTimeoutRef.current);
+			leaveTimeoutRef.current = null;
+		}
+		return () => {
+			leaveTimeoutRef.current = setTimeout(() => {
+				socket.emit("leave_room");
+				useGameStore.getState().clearRoom();
+			}, 0);
+		};
+  }, [code]);
+  
 	function copyCode() {
 		navigator.clipboard.writeText(code);
 		setCopied(true);
